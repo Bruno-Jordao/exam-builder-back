@@ -8,6 +8,9 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+import com.example.exambuilder.entity.Enum.Difficulty;
+import com.example.exambuilder.entity.Enum.QuestionType;
+
 @Getter
 @Setter
 @NoArgsConstructor
