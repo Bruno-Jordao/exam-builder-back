@@ -16,10 +16,14 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.util.List;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+
+import com.example.exambuilder.entity.Enum.Difficulty;
+import com.example.exambuilder.entity.Enum.QuestionType;
 
 @Getter
 @Setter
@@ -58,7 +62,7 @@ public class Question {
     private Teacher teacher;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AlternativeQuestion> alternatives;
+    private List<QuestionAlternative> alternatives;
 
     @ManyToMany(mappedBy = "questions")
     private List<Evaluation> evaluations;

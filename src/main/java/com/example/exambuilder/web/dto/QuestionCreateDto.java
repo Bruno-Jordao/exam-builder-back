@@ -1,5 +1,8 @@
 package com.example.exambuilder.web.dto;
 
+import com.example.exambuilder.entity.Enum.Difficulty;
+import com.example.exambuilder.entity.Enum.QuestionType;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
