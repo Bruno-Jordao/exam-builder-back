@@ -1,6 +1,5 @@
 package com.example.exambuilder.web.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +11,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class QuestionAlternativeDto {
+public class QuestionAlternativeResponseDto {
 
-    @NotBlank
+    private Long id;
     private String text;
 }
