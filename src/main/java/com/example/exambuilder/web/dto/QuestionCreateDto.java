@@ -32,4 +32,7 @@ public class QuestionCreateDto {
 
     @NotNull
     private QuestionType type;
+
+    @NotNull
+    private Long teacherId;
 }

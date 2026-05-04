@@ -1,5 +1,6 @@
 package com.example.exambuilder.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,5 +25,8 @@ public class QuestionResponseDto {
     private String subject;
     private String statement;
     private QuestionType type;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime createdAt;
+    private Long teacherId;
+    private String teacherName;
 }
