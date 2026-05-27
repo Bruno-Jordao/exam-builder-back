@@ -2,6 +2,7 @@ package com.example.exambuilder.web.exception;
 
 import com.example.exambuilder.exceptions.EmailAlreadyExistsException;
 import com.example.exambuilder.exceptions.EvaluationNotFoundException;
+import com.example.exambuilder.exceptions.QuestionAlternativeNotFoundException;
 import com.example.exambuilder.exceptions.QuestionNotFoundException;
 import com.example.exambuilder.exceptions.TeacherNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({TeacherNotFoundException.class, QuestionNotFoundException.class, EvaluationNotFoundException.class})
+    @ExceptionHandler({TeacherNotFoundException.class, QuestionNotFoundException.class, EvaluationNotFoundException.class, QuestionAlternativeNotFoundException.class})
     public ResponseEntity<ErrorMessage> handleTeacherNotFound(
             TeacherNotFoundException ex,
             HttpServletRequest request) {

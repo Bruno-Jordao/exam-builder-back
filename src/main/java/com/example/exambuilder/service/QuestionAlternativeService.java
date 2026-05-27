@@ -2,7 +2,7 @@ package com.example.exambuilder.service;
 
 import com.example.exambuilder.entity.Question;
 import com.example.exambuilder.entity.QuestionAlternative;
-import com.example.exambuilder.web.exception.*;
+import com.example.exambuilder.exceptions.QuestionAlternativeNotFoundException;
 import com.example.exambuilder.exceptions.QuestionNotFoundException;
 import com.example.exambuilder.repository.QuestionAlternativeRepository;
 import com.example.exambuilder.repository.QuestionRepository;

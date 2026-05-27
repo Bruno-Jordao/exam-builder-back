@@ -20,12 +20,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @RequiredArgsConstructor
 @EnableMethodSecurity
-//@EnableWebMvc
 @Configuration
 public class SpringSecurityConfig {
 
     private final JwtUserDetailsService jwtUserDetailsService;
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -63,5 +61,4 @@ public class SpringSecurityConfig {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-    
 }

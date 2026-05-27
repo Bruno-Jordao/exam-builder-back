@@ -23,21 +23,28 @@ public class JwtUtils {
     public static final long EXPIRE_HOURS = 0;
     public static final long EXPIRE_MINUTES = 15;
 
-    private JwtUtils(){
-
+    private JwtUtils() {
     }
 
-    private static Key generateKey(){
+    private static Key generateKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
     }
 
-    private static Date toExpireDate(Date start){
-        LocalDateTime dateTime = start.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        LocalDateTime end = dateTime.plusDays(EXPIRE_DAYS).minusHours(EXPIRE_HOURS).plusMinutes(EXPIRE_MINUTES);
+    private static Date toExpireDate(Date start) {
+        LocalDateTime dateTime = start.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+
+        LocalDateTime end = dateTime
+                .plusDays(EXPIRE_DAYS)
+                .plusHours(EXPIRE_HOURS)
+                .plusMinutes(EXPIRE_MINUTES);
+
         return Date.from(end.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static JwtToken createToken(String username){
+    public static JwtToken createToken(String username) {
+
         Date issuedAt = new Date();
         Date limit = toExpireDate(issuedAt);
 
@@ -52,36 +59,47 @@ public class JwtUtils {
         return new JwtToken(token);
     }
 
-    private static Claims getClaimsFromToken(String token){
-        try{
+    private static Claims getClaimsFromToken(String token) {
+
+        try {
+
             return Jwts.parserBuilder()
-                    .setSigningKey(generateKey()).build()
-                    .parseClaimsJws(refactorToken(token)).getBody();
-        }catch (JwtException ex){
-            log.error(String.format("Invalid token %s", ex.getMessage()));
+                    .setSigningKey(generateKey())
+                    .build()
+                    .parseClaimsJws(refactorToken(token))
+                    .getBody();
+
+        } catch (JwtException ex) {
+            log.error("Invalid token {}", ex.getMessage());
         }
         return null;
     }
 
-    public static String getUsernameFromToken(String token){
-        return getClaimsFromToken(token).getSubject();
+    public static String getUsernameFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims != null ? claims.getSubject() : null;
     }
 
-    public static boolean isTokenValid(String token){
-        try{
+    public static boolean isTokenValid(String token) {
+        try {
             Jwts.parserBuilder()
-                    .setSigningKey(generateKey()).build()
+                    .setSigningKey(generateKey())
+                    .build()
                     .parseClaimsJws(refactorToken(token));
             return true;
-        }catch (JwtException ex){
-            log.error(String.format("Invalid token %s", ex.getMessage()));
+
+        } catch (JwtException ex) {
+            log.error("Invalid token {}", ex.getMessage());
         }
         return false;
     }
 
-    private static String refactorToken(String token){
-        if(token.contains(JWT_BEARER)){
-            return token.substring(JWT_BEARER.length());
+    private static String refactorToken(String token) {
+        if (token != null && token.startsWith(JWT_BEARER)) {
+            String refactored =
+                    token.substring(JWT_BEARER.length()).trim();
+            log.info("JWT Refactored: {}", refactored);
+            return refactored;
         }
         return token;
     }

@@ -20,19 +20,25 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUserDetailsService detailsService;
 
-
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
-        final String token = request.getHeader(JwtUtils.JWT_AUTHORIZATION);
+        final String token =
+                request.getHeader(JwtUtils.JWT_AUTHORIZATION);
 
-        if(token == null || !token.startsWith(JwtUtils.JWT_BEARER)){
-            log.info("JWT token is null, empty, or not initialized with 'Bearer '.");
+        log.info("Authorization Header: {}", token);
+
+        if (token == null || !token.startsWith(JwtUtils.JWT_BEARER)) {
+            log.info("JWT token is null, empty, or invalid.");
             filterChain.doFilter(request, response);
             return;
         }
 
-        if(!JwtUtils.isTokenValid(token)){
+        if (!JwtUtils.isTokenValid(token)) {
             log.warn("The JWT token is invalid or expired.");
             filterChain.doFilter(request, response);
             return;
@@ -40,26 +46,42 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         String email = JwtUtils.getUsernameFromToken(token);
 
-        toAuthentication(request, email);
+        if (email != null) {
+            toAuthentication(request, email);
+        }
 
         filterChain.doFilter(request, response);
     }
 
-    private void toAuthentication(HttpServletRequest request, String email) {
-        UserDetails userDetails = detailsService.loadUserByUsername(email);
+    private void toAuthentication(
+            HttpServletRequest request,
+            String email
+    ) {
 
-        UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken
-                .authenticated(userDetails, null, userDetails.getAuthorities());
+        UserDetails userDetails =
+                detailsService.loadUserByUsername(email);
 
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        UsernamePasswordAuthenticationToken authenticationToken =
+                UsernamePasswordAuthenticationToken.authenticated(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
 
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        authenticationToken.setDetails(
+                new WebAuthenticationDetailsSource()
+                        .buildDetails(request)
+        );
+
+        SecurityContextHolder.getContext()
+                .setAuthentication(authenticationToken);
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
+
         String path = request.getServletPath();
-        //return path.equals("/api/v1/auth");
+
         return path.startsWith("/api/v1/auth")
                 || path.startsWith("/docs-exambuilder")
                 || path.startsWith("/swagger-ui")

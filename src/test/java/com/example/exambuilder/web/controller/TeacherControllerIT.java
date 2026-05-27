@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -18,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class TeacherControllerIT {
 
     @Autowired
@@ -25,11 +28,6 @@ class TeacherControllerIT {
 
     @Autowired
     private TeacherRepository repository;
-
-    @BeforeEach
-    void cleanDatabase() {
-        repository.deleteAll();
-    }
 
     private String getToken() throws Exception {
 
@@ -39,7 +37,7 @@ class TeacherControllerIT {
           "email": "bruno@email.com",
           "password": "123456"
         }
-    """;
+        """;
 
         mockMvc.perform(post("/api/v1/teachers")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -50,7 +48,7 @@ class TeacherControllerIT {
           "email": "bruno@email.com",
           "password": "123456"
         }
-    """;
+        """;
 
         String response = mockMvc.perform(post("/api/v1/auth")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -62,18 +60,18 @@ class TeacherControllerIT {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> json = mapper.readValue(response, Map.class);
 
-        return json.get("token"); // SOMENTE O TOKEN
+        return json.get("token");
     }
 
     @Test
     void shouldCreateTeacherSuccessfully() throws Exception {
 
         String body = """
-            {
-              "name": "Bruno",
-              "email": "bruno@email.com",
-              "password": "123456"
-            }
+        {
+          "name": "Bruno",
+          "email": "bruno@email.com",
+          "password": "123456"
+        }
         """;
 
         mockMvc.perform(post("/api/v1/teachers")
@@ -88,7 +86,8 @@ class TeacherControllerIT {
 
         String token = getToken();
 
-        Teacher teacher = repository.findAll().get(0);
+        Teacher teacher = repository.findByEmail("bruno@email.com")
+                .orElseThrow();
 
         mockMvc.perform(get("/api/v1/teachers/" + teacher.getId())
                         .header("Authorization", "Bearer " + token))
