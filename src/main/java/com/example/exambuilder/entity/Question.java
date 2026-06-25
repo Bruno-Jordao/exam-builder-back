@@ -21,6 +21,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 import com.example.exambuilder.entity.Enum.Difficulty;
 import com.example.exambuilder.entity.Enum.QuestionType;
@@ -62,10 +63,10 @@ public class Question {
     private Teacher teacher;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionAlternative> alternatives;
+    private Set<QuestionAlternative> alternatives;
 
     @ManyToMany(mappedBy = "questions")
-    private List<Evaluation> evaluations;
+    private Set<Evaluation> evaluations;
 
     @Override
     public boolean equals(Object o) {

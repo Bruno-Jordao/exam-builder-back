@@ -22,7 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -38,7 +41,8 @@ public class EvaluationService {
                 () -> new TeacherNotFoundException("Teacher not found!")
         );
 
-        List<Question> questions = questionRepository.findAllById(createDto.getQuestionIds());
+        Set<Question> questions =
+                new HashSet<>(questionRepository.findAllById(createDto.getQuestionIds()));
 
         Evaluation evaluation = new Evaluation();
 
@@ -63,7 +67,8 @@ public class EvaluationService {
                 () -> new TeacherNotFoundException("Teacher not found!")
         );
 
-        List<Question> questions = questionRepository.findAllById(createDto.getQuestionIds());
+        Set<Question> questions =
+                new HashSet<>(questionRepository.findAllById(createDto.getQuestionIds()));
 
         evaluation.setDiscipline(createDto.getDiscipline());
         evaluation.setGradeLevel(createDto.getGradeLevel());
@@ -116,26 +121,21 @@ public class EvaluationService {
 
             document.open();
 
-            document.add(new Paragraph("PROVA"));
-            document.add(new Paragraph(" "));
-
             document.add(new Paragraph("Instituição: " + evaluation.getInstitution()));
             document.add(new Paragraph("Disciplina: " + evaluation.getDiscipline()));
             document.add(new Paragraph("Série/Turma: " + evaluation.getGradeLevel()));
-
-            document.add(new Paragraph(" "));
             document.add(new Paragraph("Professor: " + evaluation.getTeacher().getName()));
-            document.add(new Paragraph(" "));
             document.add(new Paragraph("Nome do Aluno: _______________________________________"));
-            document.add(new Paragraph(" "));
             document.add(new Paragraph("Data: ____/____/________"));
             document.add(new Paragraph(" "));
-            document.add(new Paragraph("_______________________________________________________"));
+            document.add(new Paragraph("AVALIAÇÃO 1"));
             document.add(new Paragraph(" "));
+
+            Set<Question> questions = new LinkedHashSet<>(evaluation.getQuestions());
 
             int numeroQuestao = 1;
 
-            for (Question question : evaluation.getQuestions()) {
+            for (Question question : questions) {
 
                 System.out.println("--------------------------------");
                 System.out.println("Questão ID: " + question.getId());
@@ -172,8 +172,8 @@ public class EvaluationService {
 
                             letra++;
                         }
-                    } else {
 
+                    } else {
                         document.add(
                                 new Paragraph(
                                         "[Nenhuma alternativa encontrada]"
@@ -182,23 +182,17 @@ public class EvaluationService {
                     }
 
                     document.add(new Paragraph(" "));
+
                 } else {
-
                     document.add(
                             new Paragraph(
-                                    "____________________________________________________"
+                                    "______________________________________________________________________________"
                             )
                     );
 
                     document.add(
                             new Paragraph(
-                                    "____________________________________________________"
-                            )
-                    );
-
-                    document.add(
-                            new Paragraph(
-                                    "____________________________________________________"
+                                    "______________________________________________________________________________"
                             )
                     );
 
