@@ -24,14 +24,13 @@ public class QuestionAlternativeService {
 
     @Transactional
     public QuestionAlternativeResponseDto create(QuestionAlternativeCreateDto createDto) {
-        Question question = questionRepository.findById(createDto.getQuestionId()).orElseThrow(
-                () -> new QuestionNotFoundException("Question not found!")
-        );
+        Question question = questionRepository.findById(createDto.getQuestionId()).orElseThrow(() ->
+                        new QuestionNotFoundException("Question not found!"));
 
         QuestionAlternative questionAlternative = QuestionAlternativeMapper.toQuestionAlternative(createDto);
         questionAlternative.setQuestion(question);
 
-        questionAlternativeRepository.save(questionAlternative);
+        questionAlternative = questionAlternativeRepository.save(questionAlternative);
 
         return QuestionAlternativeMapper.toDto(questionAlternative);
     }

@@ -7,20 +7,34 @@ import org.modelmapper.ModelMapper;
  
 import java.util.List;
 import java.util.stream.Collectors;
- 
+
 public class QuestionAlternativeMapper {
- 
-    private static final ModelMapper modelMapper = new ModelMapper();
- 
-    public static QuestionAlternative toQuestionAlternative(QuestionAlternativeCreateDto createDto) {
-        return modelMapper.map(createDto, QuestionAlternative.class);
+
+    public static QuestionAlternative toQuestionAlternative(
+            QuestionAlternativeCreateDto createDto) {
+
+        QuestionAlternative alternative = new QuestionAlternative();
+
+        alternative.setText(createDto.getText());
+
+        return alternative;
     }
- 
-    public static QuestionAlternativeResponseDto toDto(QuestionAlternative alternative) {
-        return modelMapper.map(alternative, QuestionAlternativeResponseDto.class);
+
+    public static QuestionAlternativeResponseDto toDto(
+            QuestionAlternative alternative) {
+
+        QuestionAlternativeResponseDto dto =
+                new QuestionAlternativeResponseDto();
+
+        dto.setId(alternative.getId());
+        dto.setText(alternative.getText());
+
+        return dto;
     }
- 
-    public static List<QuestionAlternativeResponseDto> toListDto(List<QuestionAlternative> alternatives) {
+
+    public static List<QuestionAlternativeResponseDto> toListDto(
+            List<QuestionAlternative> alternatives) {
+
         return alternatives.stream()
                 .map(QuestionAlternativeMapper::toDto)
                 .collect(Collectors.toList());
